@@ -2,7 +2,7 @@
 (D)ownload videos from YT, extract it into (F)rames, draw an intital (B)ounding box and test (T)rackers on it. 
 
 # Requirments:
-1. A computer with anu kind of linux system to be able to use the os.system
+1. A computer with any kind of linux system to be able to use the os.system
 2. Pytrtacking
 3. Pysot
 4. All needed libraries
