@@ -9,6 +9,7 @@
 
 # what to modify in the code:
 After downloading the *pytracking* and *pysot*:
+
 Make sure you write down the path of pytracking in line #16 and for pysot in line #23.
 
 
@@ -16,4 +17,5 @@ Make sure you write down the path of pytracking in line #16 and for pysot in lin
 `python try2.py --YT_ID ID of the YT --start start time in seconds --duration duration in seconds`
 
 example:
+
 `python try2.py --YT_ID ez-F6Qt3Of0 --start 252 --duration 13`
