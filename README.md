@@ -8,12 +8,12 @@
 4. All needed libraries
 
 # what to modify in the code:
-After downloading the *pytracking* and *pysot* #:
-Make sure you write down the path of pytracking in line #16 and Line #23 for pysot.
+After downloading the *pytracking* and *pysot*:
+Make sure you write down the path of pytracking in line #16 and for pysot in line #23.
 
 
-# How to use run the file:
-`python try2.py --YT_ID ID of the YT --start start time in seconds --duration the duration in seconds`
+# How to run the file:
+`python try2.py --YT_ID ID of the YT --start start time in seconds --duration duration in seconds`
 
 example:
-'python try2.py --YT_ID ez-F6Qt3Of0 --start 252 --duration 13'
+`python try2.py --YT_ID ez-F6Qt3Of0 --start 252 --duration 13`
