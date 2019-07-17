@@ -4,6 +4,7 @@
 # Requirments:
 1. A computer with any kind of linux system to be able to use the os.system
 2. Pytracking
+  *download the new model of ATOM from issue 41*
 3. Pysot
 4. All needed libraries
 
