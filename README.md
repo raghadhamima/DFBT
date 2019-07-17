@@ -16,5 +16,4 @@ Make sure you write down the path of pytracking in line #16 and Line #23 for pys
 `python try2.py --YT_ID ID of the YT --start start time in seconds --duration the duration in seconds`
 
 example:
-
-`python try2.py --YT_ID ID of the YT --start start time in seconds --duration the duration in seconds`
+'python try2.py --YT_ID ez-F6Qt3Of0 --start 252 --duration 13'
