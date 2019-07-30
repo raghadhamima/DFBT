@@ -11,7 +11,7 @@
 # what to modify in the code:
 After downloading *pytracking* and *pysot*:
 
-Make sure you write down the path IN lINE 158
+Make sure you write down the path in Line 158
 
 
 # How to run the file:
