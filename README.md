@@ -26,4 +26,4 @@ In pytracking:
 
 Atom model will have 0 bytes check in pytracking/pytracking/networks/atom_default.pth 
 
-  *download the new model of ATOM from issue 41*
+  *download the new model of ATOM from issue 41 in the pytracking page*
