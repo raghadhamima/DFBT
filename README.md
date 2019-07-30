@@ -5,8 +5,7 @@
 1. A computer with any kind of linux system to be able to use the os.system
 2. Pytracking
 3. Pysot
-
-3.1. CUDA10
+4. CUDA10
 
 
 # what to modify in the code:
