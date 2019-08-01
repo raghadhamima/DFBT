@@ -45,11 +45,11 @@ Make sure you write down the path in Line 158
 
 
 # How to run the file:
-`python try2.py --YT_ID <ID of the YT> --start <start time in seconds> --duration <duration in seconds> --path <where to save that sequence> `
+`python main.py --YT_ID <ID of the YT> --start <start time in seconds> --duration <duration in seconds> --path <where to save that sequence> `
 
 example:
 
-`python try2.py --YT_ID ez-F6Qt3Of0 --start 252 --duration 13 --path /home/hamimart/Documents/Videos`
+`python main.py --YT_ID ez-F6Qt3Of0 --start 252 --duration 13 --path /home/hamimart/Documents/Videos`
 
 # Problem that might occured
 In pytracking:
