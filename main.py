@@ -122,7 +122,7 @@ def run_tracker_pytracking(args):
 def run_tracker_pysot(args):
 
     for my_trackers in tqdm(['siamrpn_alex_dwxcorr' , 'siamrpn_r50_l234_dwxcorr' , 'siamrpn_mobilev2_l234_dwxcorr']):
-        os.system(f"python run_pysot.py --YT_ID '{args.YT_ID}' --ID {args.ID} --tracker_name '{my_trackers}'")
+        os.system(f"python run_pysot.py --YT_ID '{args.YT_ID}' --ID {args.ID} --tracker_name '{my_trackers}' --path {args.path}")
 
 
     
@@ -182,17 +182,17 @@ def main():
     cut_video(args)
     extract_frames(args)
     draw_first_BB(args)
-    # run_tracker_pysot(args)
+    run_tracker_pysot(args)
     # print("------------- pysot done -------------")
-    # run_tracker_pytracking(args)
+    run_tracker_pytracking(args)
     # print("---------- pytracking done ----------")
-    # result_BB(args)
+    result_BB(args)
     # print("---------- result_BB done ----------")
-    first_frame = os.path.join(args.path, args.YT_ID + '_' + str(args.ID), "firstBB.png")
-    dropbox_file = f"/home/hamimart/Dropbox/TrackingNet2.0/{args.YT_ID}_{args.ID}.png"
-    shutil.copyfile(first_frame, dropbox_file)
-    print("---------- dopy First frame to DropBox done ----------")
-    # result_video(args)
+    # first_frame = os.path.join(args.path, args.YT_ID + '_' + str(args.ID), "firstBB.png")
+    # dropbox_file = f"/home/hamimart/Dropbox/TrackingNet2.0/{args.YT_ID}_{args.ID}.png"
+    # shutil.copyfile(first_frame, dropbox_file)
+    # print("---------- dopy First frame to DropBox done ----------")
+    result_video(args)
     # print("---------- result_video done ----------")
 
 
