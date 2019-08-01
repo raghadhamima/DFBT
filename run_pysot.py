@@ -63,7 +63,7 @@ def run_tracker_pysot(args):
         video_name = args.YT_ID.split('/')[-1].split('.')[0]
     else:
         video_name = 'webcam'
-    cv2.namedWindow(args.YT_ID, cv2.WND_PROP_FULLSCREEN)
+    # cv2.namedWindow(args.YT_ID, cv2.WND_PROP_FULLSCREEN)
     pred_bboxes = []
     for frame in get_frames(args):
         if first_frame:
@@ -80,12 +80,12 @@ def run_tracker_pysot(args):
             bbox = list(map(int, outputs['bbox']))
             pred_bbox = outputs['bbox']
             pred_bboxes.append(pred_bbox)
-            cv2.rectangle(frame, (bbox[0], bbox[1]),
-                            (bbox[0]+bbox[2], bbox[1]+bbox[3]),
-                            (0, 255, 0), 3)
-            cv2.imshow(args.YT_ID, frame)
+            # cv2.rectangle(frame, (bbox[0], bbox[1]),
+            #                 (bbox[0]+bbox[2], bbox[1]+bbox[3]),
+            #                 (0, 255, 0), 3)
+            # cv2.imshow(args.YT_ID, frame)
 
-            cv2.waitKey(40)
+            # cv2.waitKey(40)
     model_path = os.path.join(args.path, args.YT_ID + '_' + str(args.ID), 'results', args.tracker_name)
     if not os.path.isdir(model_path):
         os.makedirs(model_path)
