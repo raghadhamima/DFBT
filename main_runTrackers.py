@@ -77,8 +77,9 @@ def main():
             frame_BB_path = os.path.join(sequence_path, 'frames_BB')
             first_BB_path = os.path.join(sequence_path, "initial_BB.txt")
             tracking_results_path = os.path.join(sequence_path, 'results')
+            video_BB_path = os.path.join(sequence_path, 'video_BB.mkv')
 
-            # try:
+
             # Download the video
             download_video(args.YT_ID, full_video_path)
 
@@ -103,10 +104,8 @@ def main():
                         frame_BB_path, sequence_ID, args.YT_ID)
 
             # create results on video
-            result_video(frame_BB_path, sequence_path, video_BB_path)
+            result_video(frame_BB_path, video_BB_path)
 
-            # except:
-            #     print("issue with", sequence_ID)
 
 
 if __name__ == '__main__':

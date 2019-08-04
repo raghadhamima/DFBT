@@ -167,7 +167,7 @@ def result_BB(tracking_results_path, frame_path, frame_BB_path, sequence_ID, YT_
         cv2.imwrite(frame_BB_file, img)
 
 
-def result_video(frame_BB_path, sequence_path, video_BB_path):
+def result_video(frame_BB_path, video_BB_path):
     os.system(f"ffmpeg -y -i {frame_BB_path}/%04d.png -qscale:v 2 {video_BB_path} -hide_banner")
     os.system(
         f"xdg-open {video_BB_path}")
