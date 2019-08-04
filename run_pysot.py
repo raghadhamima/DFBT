@@ -86,7 +86,7 @@ def run_tracker_pysot(args):
             # cv2.imshow(args.YT_ID, frame)
 
             # cv2.waitKey(40)
-    model_path = os.path.join(args.path, args.YT_ID + '_' + str(args.ID), 'results', args.tracker_name)
+    model_path = os.path.join(args.path, args.YT_ID + '_' + str(args.ID), 'Sequences', results', args.tracker_name)
     if not os.path.isdir(model_path):
         os.makedirs(model_path)
     result_path = os.path.join(model_path, f'{video_name}.txt')

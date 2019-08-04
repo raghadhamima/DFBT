@@ -49,6 +49,7 @@ def main():
     cut_video_path = os.path.join(sequence_path, 'video.mp4')
     frame_path = os.path.join(sequence_path, 'frames')
     frame_BB_path = os.path.join(sequence_path, 'frames_BB')
+    first_BB_path = os.path.join(sequence_path, "initial_BB.txt")
     tracking_results_path = os.path.join(sequence_path, 'results')
 
     # remove previous results
