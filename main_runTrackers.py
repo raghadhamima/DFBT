@@ -56,7 +56,7 @@ def main():
     for i, data in df.iterrows():
         # print(data)
         # print(data["Youtube_ID"])
-        if i>6:
+        if i>6 and i <8:
         # if (isinstance(data["Object_ID"], float)):
             # print(int(data["Object_ID"]))
             args.YT_ID = data["Youtube_ID"]
@@ -78,35 +78,35 @@ def main():
             first_BB_path = os.path.join(sequence_path, "initial_BB.txt")
             tracking_results_path = os.path.join(sequence_path, 'results')
 
-            try:
-                # Download the video
-                download_video(args.YT_ID, full_video_path)
+            # try:
+            # Download the video
+            download_video(args.YT_ID, full_video_path)
 
-                #Cut the video
-                cut_video(full_video_path, cut_video_path, args.start, args.duration)
+            #Cut the video
+            cut_video(full_video_path, cut_video_path, args.start, args.duration)
 
-                #extract frames
-                extract_frames(cut_video_path, frame_path)
+            #extract frames
+            extract_frames(cut_video_path, frame_path)
 
-                # draw the first Bounding box
-                if not os.path.exists(first_BB_path):
-                    draw_first_BB(sequence_path, frame_path, first_BB_path)
+            # draw the first Bounding box
+            if not os.path.exists(first_BB_path):
+                draw_first_BB(sequence_path, frame_path, first_BB_path)
 
-                # Run trackers bsed on pysot
-                run_tracker_pysot(args.YT_ID, args.ID, args.path)
+            # Run trackers bsed on pysot
+            run_tracker_pysot(args.YT_ID, args.ID, args.path)
 
-                # Run trackers bsed on pytracking
-                run_tracker_pytracking(frame_path, sequence_path, tracking_results_path)
+            # Run trackers bsed on pytracking
+            run_tracker_pytracking(frame_path, sequence_path, tracking_results_path, sequence_ID)
 
-                # show result bounding boxes
-                result_BB(tracking_results_path, frame_path,
-                          frame_BB_path, sequence_ID, args.YT_ID)
+            # show result bounding boxes
+            result_BB(tracking_results_path, frame_path,
+                        frame_BB_path, sequence_ID, args.YT_ID)
 
-                # create results on video
-                result_video(frame_BB_path, sequence_path)
+            # create results on video
+            result_video(frame_BB_path, sequence_path)
 
-            except:
-                print("issue with", sequence_ID)
+            # except:
+            #     print("issue with", sequence_ID)
 
 
 if __name__ == '__main__':
