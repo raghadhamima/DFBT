@@ -48,7 +48,7 @@ def cut_video(video_path, cut_video_path, start, duration, erase_input=False):
 
     # cut the video
     os.system(
-        f"ffmpeg -i {video_path} -qscale:v 2 -ss {start} -t {duration} -async 1 {cut_video_path} -hide_banner")
+        f"ffmpeg -y -i {video_path} -qscale:v 2 -ss {start} -t {duration} -async 1 {cut_video_path} -hide_banner")
     print("---------- done cutting video ---------- ")
 
     if erase_input:
@@ -65,7 +65,7 @@ def extract_frames(cut_video_path, frame_path):
     os.mkdir(frame_path)
     # extracting frames
     os.system(
-        f"ffmpeg -i {cut_video_path}  -qscale:v 2 {frame_path}/%04d.png -hide_banner")
+        f"ffmpeg -y -i {cut_video_path}  -qscale:v 2 {frame_path}/%04d.png -hide_banner")
 
     print('---------- done frames extracting ----------')
 
@@ -164,6 +164,6 @@ def result_BB(tracking_results_path, frame_path, frame_BB_path, sequence_ID, YT_
 
 
 def result_video(frame_BB_path, sequence_path):
-    os.system(f"ffmpeg -i {frame_BB_path}/%04d.png -qscale:v 2 {os.path.join(sequence_path, 'video_BB.mkv')} -hide_banner")
+    os.system(f"ffmpeg -y -i {frame_BB_path}/%04d.png -qscale:v 2 {os.path.join(sequence_path, 'video_BB.mkv')} -hide_banner")
     os.system(
         f"xdg-open {sequence_path}/video_BB.mkv")
