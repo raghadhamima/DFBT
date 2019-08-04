@@ -51,11 +51,23 @@ def main():
     frame_BB_path = os.path.join(sequence_path, 'frames_BB')
     first_BB_path = os.path.join(sequence_path, "initial_BB.txt")
     tracking_results_path = os.path.join(sequence_path, 'results')
+    video_BB_path = os.path.join(sequence_path, 'video_BB.mkv')
 
     # remove previous results
     if (args.overwrite):
-        if os.path.exists(sequence_path) and os.path.isdir(sequence_path):
-            shutil.rmtree(sequence_path)
+        # if os.path.exists(sequence_path) and os.path.isdir(sequence_path):
+        #     # shutil.rmtree(sequence_path)
+        if os.path.exists(cut_video_path):
+            os.remove(cut_video_path)
+        if os.path.exists(video_BB_path):
+            os.remove(video_BB_path)
+        if os.path.exists(frame_path) and os.path.isdir(frame_path):
+            shutil.rmtree(frame_path)
+        if os.path.exists(frame_BB_path) and os.path.isdir(frame_BB_path):
+            shutil.rmtree(frame_BB_path)
+        if os.path.exists(tracking_results_path) and os.path.isdir(tracking_results_path):
+            shutil.rmtree(tracking_results_path)
+
 
     # Download the video
     download_video(args.YT_ID, full_video_path)
@@ -80,7 +92,7 @@ def main():
               frame_BB_path, sequence_ID, args.YT_ID)
 
     # create results on video
-    result_video(frame_BB_path, sequence_path)
+    result_video(frame_BB_path, sequence_path, video_BB_path)
     
 
 
