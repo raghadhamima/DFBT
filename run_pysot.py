@@ -28,7 +28,7 @@ torch.set_num_threads(1)
 
 def get_frames(args):
 
-    images = glob(os.path.join(args.path, args.YT_ID + '_' + str(args.ID), 'frames', '*.pn*'))
+    images = glob(os.path.join(args.path, 'Sequences', args.YT_ID + '_' + str(args.ID), 'frames', '*.pn*'))
     images = sorted(images,
                     key=lambda x: int(x.split('/')[-1].split('.')[0]))
     for img in images:
@@ -68,7 +68,7 @@ def run_tracker_pysot(args):
     for frame in get_frames(args):
         if first_frame:
             try:
-                init_rect = np.loadtxt(str(os.path.join(args.path, args.YT_ID + '_' + str(args.ID), 'initial_BB.txt')), delimiter=',', dtype=np.float64)
+                init_rect = np.loadtxt(str(os.path.join(args.path, 'Sequences', args.YT_ID + '_' + str(args.ID), 'initial_BB.txt')), delimiter=',', dtype=np.float64)
                 
             except:
                 exit()
@@ -86,7 +86,7 @@ def run_tracker_pysot(args):
             # cv2.imshow(args.YT_ID, frame)
 
             # cv2.waitKey(40)
-    model_path = os.path.join(args.path, args.YT_ID + '_' + str(args.ID), 'Sequences', results', args.tracker_name)
+    model_path = os.path.join(args.path, 'Sequences', args.YT_ID + '_' + str(args.ID), 'results', args.tracker_name)
     if not os.path.isdir(model_path):
         os.makedirs(model_path)
     result_path = os.path.join(model_path, f'{video_name}.txt')
@@ -103,7 +103,8 @@ def main():
     parser.add_argument('--YT_ID', default='', type=str,
                         help='videos or image files')
     parser.add_argument('--ID', type=int, default=0, help='ID of the sequence')
-    parser.add_argument('--path', type=str, default="/home/hamimart/Documents/Videos",help='where to save the sequence/video/results')
+    parser.add_argument('--path', type=str, default="/home/$USER/Documents/Videos",
+                        help='where to save the sequence/video/results')
 
 
     args = parser.parse_args()

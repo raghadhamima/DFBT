@@ -36,7 +36,7 @@ def main():
                         help='duration time of the frames')
     parser.add_argument('--ID', type=int, default=0, 
                         help='ID of the sequence')
-    parser.add_argument('--path', type=str, default="/home/hamimart/Documents/Videos",
+    parser.add_argument('--path', type=str, default="/home/$USER/Documents/Videos",
                         help='where to save the sequence/video/results')
             
     args = parser.parse_args()
@@ -44,7 +44,7 @@ def main():
 
     # define all paths
     sequence_ID =args.YT_ID + "_" + str(args.ID)
-    full_video_path = os.path.join(args.path, "Videos", sequence_ID+'.mp4')
+    full_video_path = os.path.join(args.path, "Videos", args.YT_ID+'.mp4')
     sequence_path = os.path.join(args.path, "Sequences", sequence_ID)
     cut_video_path = os.path.join(sequence_path, 'video.mp4')
     frame_path = os.path.join(sequence_path, 'frames')

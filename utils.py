@@ -62,7 +62,8 @@ def cut_video(video_path, cut_video_path, start, duration, erase_input=False):
 
 def extract_frames(cut_video_path, frame_path):
     print("---------- start extract frames ---------- ")
-    os.mkdir(frame_path)
+    os.makedirs(frame_path, exist_ok=True)
+
     # extracting frames
     os.system(
         f"ffmpeg -y -i {cut_video_path}  -qscale:v 2 {frame_path}/%04d.png -hide_banner")
@@ -80,12 +81,15 @@ def draw_first_BB(sequence_path, frame_path, first_BB_path):
 
     while not valid_selection:
         frame_disp = img.copy()
-        cv2.putText(frame_disp, 'Select target ROI and press ENTER', (20, 30), cv2.FONT_HERSHEY_COMPLEX_SMALL,
+        cv2.putText(frame_disp, 'Select target ROI and press ENTER [ESC to use previous BB]', (20, 30), cv2.FONT_HERSHEY_COMPLEX_SMALL,
                     1.5, (0, 0, 0), 1)
 
         x, y, w, h = cv2.selectROI(display_name, frame_disp, fromCenter=False)
         init_state = [x, y, w, h]
         valid_selection = np.sum(init_state)
+        if cv2.waitKey(0) == 27:
+            cv2.destroyAllWindows()
+            return
 
     print(init_state)
     cv2.rectangle(img, (init_state[0], init_state[1]), (init_state[0] +
