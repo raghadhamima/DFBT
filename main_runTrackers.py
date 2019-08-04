@@ -38,7 +38,7 @@ def main():
     #                     help='duration time of the frames')
     # parser.add_argument('--ID', type=int, default=0,
     #                     help='ID of the sequence')
-    parser.add_argument('--path', type=str, default="/home/hamimart/TrackingNet2.0",
+    parser.add_argument('--path', type=str, default="/home/$USER/Documents/Videos",
                         help='where to save the sequence/video/results')
 
     parser.add_argument('--CSV', type=str, default="TrackingNet 2.0 Test Set Extension - Final TrackingNet2.0.csv",
@@ -56,9 +56,10 @@ def main():
     for i, data in df.iterrows():
         # print(data)
         # print(data["Youtube_ID"])
-        if i>6 and i <8:
+        if i>6:
         # if (isinstance(data["Object_ID"], float)):
             # print(int(data["Object_ID"]))
+            print(data)
             args.YT_ID = data["Youtube_ID"]
             args.start = data["Start Time"]
             args.duration = data["Duration"]
@@ -80,18 +81,18 @@ def main():
             video_BB_path = os.path.join(sequence_path, 'video_BB.mkv')
 
 
-            # Download the video
-            download_video(args.YT_ID, full_video_path)
+            # # Download the video
+            # download_video(args.YT_ID, full_video_path)
 
-            #Cut the video
-            cut_video(full_video_path, cut_video_path, args.start, args.duration)
+            # #Cut the video
+            # cut_video(full_video_path, cut_video_path, args.start, args.duration)
 
-            #extract frames
-            extract_frames(cut_video_path, frame_path)
+            # #extract frames
+            # extract_frames(cut_video_path, frame_path)
 
-            # draw the first Bounding box
-            if not os.path.exists(first_BB_path):
-                draw_first_BB(sequence_path, frame_path, first_BB_path)
+            # # draw the first Bounding box
+            # if not os.path.exists(first_BB_path):
+            #     draw_first_BB(sequence_path, frame_path, first_BB_path)
 
             # Run trackers bsed on pysot
             run_tracker_pysot(args.YT_ID, args.ID, args.path)

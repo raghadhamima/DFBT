@@ -30,13 +30,15 @@ def download_video(YT_ID, output_path):
 
     #Download video from youtube:
     print("---------- starting YT_DL ---------- ")
-    ydl = YoutubeDL({'outtmpl': output_path,
-                     'format': 'mp4'})
 
-    with ydl:
-        result = ydl.extract_info(
-            'https://www.youtube.com/watch?v={0}'.format(YT_ID),
-            download=True)
+    if not os.path.exists(output_path):
+        ydl = YoutubeDL({'outtmpl': output_path,
+                        'format': 'mp4'})
+
+        with ydl:
+            result = ydl.extract_info(
+                'https://www.youtube.com/watch?v={0}'.format(YT_ID),
+                download=True)
     print("---------- YT_DL done ----------")
 
 
@@ -47,8 +49,9 @@ def cut_video(video_path, cut_video_path, start, duration, erase_input=False):
     os.makedirs(os.path.dirname(cut_video_path), exist_ok=True)
 
     # cut the video
-    os.system(
-        f"ffmpeg -y -i {video_path} -qscale:v 2 -ss {start} -t {duration} -async 1 {cut_video_path} -hide_banner")
+    if not os.path.exists(cut_video_path):
+        os.system(
+            f"ffmpeg -y -i {video_path} -qscale:v 2 -ss {start} -t {duration} -async 1 {cut_video_path} -hide_banner")
     print("---------- done cutting video ---------- ")
 
     if erase_input:
@@ -65,22 +68,30 @@ def extract_frames(cut_video_path, frame_path):
     os.makedirs(frame_path, exist_ok=True)
 
     # extracting frames
-    os.system(
-        f"ffmpeg -y -i {cut_video_path}  -qscale:v 2 {frame_path}/%04d.png -hide_banner")
+    if not os.path.exists(f"{frame_path}/0001.png"):
+        os.system(
+            f"ffmpeg -n -i {cut_video_path}  -qscale:v 2 {frame_path}/%04d.png -hide_banner")
 
     print('---------- done frames extracting ----------')
 
 
-def draw_first_BB(sequence_path, frame_path, first_BB_path):
+def draw_first_BB(sequence_path, frame_path, first_BB_path, sequence_ID):
     print("---------- start drawing ibox ---------- ")
     img = cv2.imread(os.path.join(frame_path, "0001.png"))
-    display_name = 'Display: Draw Initial Bounding Box'
+    display_name = f'Display: Draw Initial Bounding Box {sequence_ID}'
     cv2.imshow(display_name, img)
     valid_selection = False
     init_state = [0, 0, 0, 0]
 
     while not valid_selection:
         frame_disp = img.copy()
+
+        if os.path.exists(first_BB_path):
+            annot = np.loadtxt(first_BB_path, dtype=np.int, delimiter=',')
+            cv2.rectangle(frame_disp,  (annot[0], annot[1]),
+                                (annot[0]+annot[2], annot[1] + annot[3]), 
+                                (0, 255, 00), 2)  # Cyan
+                                
         cv2.putText(frame_disp, 'Select target ROI and press ENTER [ESC to use previous BB]', (20, 30), cv2.FONT_HERSHEY_COMPLEX_SMALL,
                     1.5, (0, 0, 0), 1)
 
@@ -104,6 +115,7 @@ def draw_first_BB(sequence_path, frame_path, first_BB_path):
 def run_tracker_pysot(YT_ID, ID, path):
 
     for my_trackers in tqdm(['siamrpn_alex_dwxcorr', 'siamrpn_r50_l234_dwxcorr', 'siamrpn_mobilev2_l234_dwxcorr']):
+    # for my_trackers in tqdm(['siamrpn_r50_l234_dwxcorr']):
         os.system(
             f"python run_pysot.py --YT_ID '{YT_ID}' --ID {ID} --tracker_name '{my_trackers}' --path {path}")
 
@@ -126,6 +138,7 @@ def run_tracker_pytracking(frame_path, sequence_path, tracking_results_path, seq
     os.makedirs(tracking_results_path, exist_ok=True)
 
     for my_trackers in tqdm(['atom', 'eco']):
+    # for my_trackers in tqdm(['atom']):
         my_tracker = Tracker(f"{my_trackers}", "default")
         #Path of the Result folder
         my_tracker.results_dir = os.path.join(tracking_results_path, my_trackers)
@@ -147,20 +160,35 @@ def result_BB(tracking_results_path, frame_path, frame_BB_path, sequence_ID, YT_
                                                                "siamrpn_r50_l234_dwxcorr", f"{YT_ID}.txt"), dtype=np.float, delimiter=',').astype(np.int)
 
     for i, (ATOM_BB, ECO_BB, siamrpn_alex_BB, siamrpn_mobile_BB, siamrpn_r50_BB) in tqdm(enumerate(zip(results_ATOM, results_ECO, results_siamrpn_alex_dwxcorr, results_siamrpn_mobilev2_l234_dwxcorr, results_siamrpn_r50_l234_dwxcorr))):
+    # for i, (ATOM_BB, siamrpn_r50_BB) in tqdm(enumerate(zip(results_ATOM, results_siamrpn_r50_l234_dwxcorr))):
 
         frame_file = os.path.join(frame_path, f"{i+1:04d}.png")
         img = cv2.imread(frame_file)
 
-        cv2.rectangle(img, (ATOM_BB[0], ATOM_BB[1]), (ATOM_BB[0]+ATOM_BB[2],
-                                                      ATOM_BB[1] + ATOM_BB[3]), (255, 255, 00), 2)  # Cyan
-        cv2.rectangle(img, (ECO_BB[0], ECO_BB[1]), (ECO_BB[0] +
-                                                    ECO_BB[2], ECO_BB[1] + ECO_BB[3]), (00, 00, 255), 2)  # Red
-        cv2.rectangle(img, (siamrpn_alex_BB[0], siamrpn_alex_BB[1]), (siamrpn_alex_BB[0] +
-                                                                      siamrpn_alex_BB[2], siamrpn_alex_BB[1] + siamrpn_alex_BB[3]), (255, 255, 255), 2)  # White
-        cv2.rectangle(img, (siamrpn_mobile_BB[0], siamrpn_mobile_BB[1]), (siamrpn_mobile_BB[0] +
-                                                                          siamrpn_mobile_BB[2], siamrpn_mobile_BB[1] + siamrpn_mobile_BB[3]), (255, 00, 255), 2)  # Magente
-        cv2.rectangle(img, (siamrpn_r50_BB[0], siamrpn_r50_BB[1]), (siamrpn_r50_BB[0] +
-                                                                    siamrpn_r50_BB[2], siamrpn_r50_BB[1] + siamrpn_r50_BB[3]), (255, 00, 00), 2)  # Blue
+        cv2.rectangle(img,  (ATOM_BB[0], ATOM_BB[1]), 
+                            (ATOM_BB[0]+ATOM_BB[2], ATOM_BB[1] + ATOM_BB[3]), 
+                            (255, 255, 00), 2)  # Cyan
+        cv2.putText(img, 'ATOM', (0, 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 00), 1)
+
+        cv2.rectangle(img,  (ECO_BB[0], ECO_BB[1]), 
+                            (ECO_BB[0] + ECO_BB[2], ECO_BB[1] + ECO_BB[3]), 
+                            (255, 00, 00), 2)  # Blue
+        cv2.putText(img, 'ECO', (0, 30), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 00, 00), 1)
+
+        cv2.rectangle(img,  (siamrpn_mobile_BB[0], siamrpn_mobile_BB[1]), 
+                            (siamrpn_mobile_BB[0] + siamrpn_mobile_BB[2], siamrpn_mobile_BB[1] + siamrpn_mobile_BB[3]), 
+                            (255, 255, 255), 2)  # White
+        cv2.putText(img, 'SiamRPN_Mobile', (0, 50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 255), 1)
+
+        cv2.rectangle(img,  (siamrpn_alex_BB[0], siamrpn_alex_BB[1]),
+                            (siamrpn_alex_BB[0] +  siamrpn_alex_BB[2], siamrpn_alex_BB[1] + siamrpn_alex_BB[3]),
+                            (255, 00, 255), 2)  # Magente
+        cv2.putText(img, 'SiamRPN_AlexNet', (0, 40), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 00, 255), 1)
+
+        cv2.rectangle(img,  (siamrpn_r50_BB[0], siamrpn_r50_BB[1]), 
+                            (siamrpn_r50_BB[0] + siamrpn_r50_BB[2], siamrpn_r50_BB[1] + siamrpn_r50_BB[3]), 
+                            (00, 00, 255), 2)  # Red
+        cv2.putText(img, 'SiamRPN_R50', (0, 60), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (00, 00, 255), 1)
 
         os.makedirs(frame_BB_path, exist_ok=True)
         frame_BB_file = os.path.join(frame_BB_path, f"{i+1:04d}.png")

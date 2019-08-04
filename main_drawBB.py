@@ -38,7 +38,7 @@ def main():
     #                     help='duration time of the frames')
     # parser.add_argument('--ID', type=int, default=0,
     #                     help='ID of the sequence')
-    parser.add_argument('--path', type=str, default="/home/hamimart/TrackingNet2.0",
+    parser.add_argument('--path', type=str, default="/home/$USER/Documents/Videos",
                         help='where to save the sequence/video/results')
 
     parser.add_argument('--CSV', type=str, default="TrackingNet 2.0 Test Set Extension - Final TrackingNet2.0.csv",
@@ -59,10 +59,12 @@ def main():
         if i>6:
         # if (isinstance(data["Object_ID"], float)):
             # print(int(data["Object_ID"]))
+            print(data)
             args.YT_ID = data["Youtube_ID"]
-            args.start = data["Start Time"]
-            args.duration = data["Duration"]
+            args.start = int(data["Start Time"])
+            args.duration = int(data["Duration"])
             args.ID = int(data["Object_ID"])
+            print(args)
     # # remove previous BB
     # if args.overwrite:
     #     if os.path.exists(first_BB_path):
@@ -93,18 +95,18 @@ def main():
             if not os.path.exists(first_BB_path):
                 draw_first_BB(sequence_path, frame_path, first_BB_path)
 
-            # Run trackers bsed on pysot
-            run_tracker_pysot(args.YT_ID, args.ID, args.path)
+            # # Run trackers bsed on pysot
+            # run_tracker_pysot(args.YT_ID, args.ID, args.path)
 
-            # Run trackers bsed on pytracking
-            run_tracker_pytracking(frame_path, sequence_path, tracking_results_path, sequence_ID)
+            # # Run trackers bsed on pytracking
+            # run_tracker_pytracking(frame_path, sequence_path, tracking_results_path, sequence_ID)
 
-            # show result bounding boxes
-            result_BB(tracking_results_path, frame_path,
-                        frame_BB_path, sequence_ID, args.YT_ID)
+            # # show result bounding boxes
+            # result_BB(tracking_results_path, frame_path,
+            #             frame_BB_path, sequence_ID, args.YT_ID)
 
-            # create results on video
-            result_video(frame_BB_path, video_BB_path)
+            # # create results on video
+            # result_video(frame_BB_path, video_BB_path)
 
             
 
