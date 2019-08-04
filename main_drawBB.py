@@ -103,7 +103,7 @@ def main():
                           frame_BB_path, sequence_ID, args.YT_ID)
 
                 # create results on video
-                result_video(frame_BB_path, sequence_path)
+                result_video(frame_BB_path, sequence_path, video_BB_path)
 
             except:
                 print("issue with", sequence_ID)
