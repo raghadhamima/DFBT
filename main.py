@@ -4,7 +4,7 @@ import shutil
 import argparse
 from glob import glob
 import pandas as pd
-
+from time import sleep
 env_path = os.path.join(os.path.dirname(__file__), 'pytracking')
 if env_path not in sys.path:
     sys.path.append(env_path)
@@ -61,31 +61,63 @@ def run_single_sequence(args):
     #extract frames
     extract_frames(cut_video_path, frame_path)
 
+
+    first_BB_path_shared = os.path.join(
+        "/run/user/1001/gvfs/smb-share:server=10.68.74.21,share=tn2", "Sequences", sequence_ID, "initial_BB.txt")
+
     # draw the first Bounding box
-    if not os.path.exists(first_BB_path) or args.overwrite:
+    if not os.path.exists(first_BB_path) and os.path.exists(first_BB_path_shared):
 
         first_BB_path_shared = os.path.join(
             "/run/user/1001/gvfs/smb-share:server=10.68.74.21,share=tn2", "Sequences", sequence_ID, "initial_BB.txt")
-        if os.path.exists(first_BB_path_shared):
-            shutil.copyfile(first_BB_path_shared, first_BB_path)
-        else:
-            print("please Draw!")
+        # first_BB_path_shared = os.path.join(
+        #     "/home/giancos/Documents/Videos", "Sequences", sequence_ID, "initial_BB.txt")
+        
+        # if os.path.exists(first_BB_path_shared):
+        shutil.copyfile(first_BB_path_shared, first_BB_path)
+            # elif: args.just_BB
+        # else:
+            # print("please Draw!")
             # draw_first_BB(sequence_path, frame_path, first_BB_path, sequence_ID)
 
-    if not args.just_BB:
+    # if args.just_BB:
+    #     draw_first_BB(sequence_path, frame_path,
+    #                   first_BB_path, sequence_ID)
+
+    # draw BB if asked to
+    if args.draw_BB:
+        draw_first_BB(sequence_path, frame_path,
+                      first_BB_path, sequence_ID)
+
+
+    if args.run_trackers:
+        # if at that stage, no BB, then need to draw one
+        if not os.path.exists(first_BB_path):
+            draw_first_BB(sequence_path, frame_path,
+                          first_BB_path, sequence_ID)
+
+
         # Run trackers bsed on pysot
-        run_tracker_pysot(args.YT_ID, args.ID, args.path)
+        run_tracker_pysot(args.YT_ID, args.ID, args.path,
+                          tracking_results_path, args.overwrite)
 
         # Run trackers bsed on pytracking
         run_tracker_pytracking(frame_path, sequence_path,
-                            tracking_results_path, sequence_ID)
+                               tracking_results_path, sequence_ID, args.overwrite)
 
         # show result bounding boxes
         result_BB(tracking_results_path, frame_path,
-                frame_BB_path, sequence_ID, args.YT_ID)
+                  frame_BB_path, sequence_ID, args.YT_ID, args.overwrite)
 
+
+    if args.play_video:
         # create results on video
-        result_video(frame_BB_path, video_BB_path)
+        result_video(frame_BB_path, video_BB_path, args.overwrite)
+
+        # run video
+        os.system(f"xdg-open {video_BB_path}")
+        sleep(args.duration+args.sleep_between_videos)
+
 
 
 
@@ -95,8 +127,12 @@ def main():
         description='Full pipeline to download Youtube video and infer deep trackers.')
     parser.add_argument('--overwrite', action='store_true',
                         help='remove existing folder')
-    parser.add_argument('--just_BB', action='store_true',
-                        help='remove existing folder')
+    parser.add_argument('--draw_BB', action='store_true',
+                        help='run the trackers')
+    parser.add_argument('--run_trackers', action='store_true',
+                        help='run the trackers')
+    parser.add_argument('--play_video', action='store_true',
+                        help='playthe video afterwards')
 
     parser.add_argument('--YT_ID', type=str, default=None, 
                         help='ID from YT')
@@ -111,8 +147,24 @@ def main():
 
     parser.add_argument('--CSV', type=str, default=None,
                         help='where to save the sequence/video/results')
-            
+    parser.add_argument('--first_id', type=int, default=0,
+                        help='first line of CSV file')
+    parser.add_argument('--last_id', type=int, default=10000,
+                        help='last line of CSV file')
+    parser.add_argument('--single_id', type=int, default=0,
+                        help='first line of CSV file')
+    parser.add_argument('--sleep_between_videos', type=int, default=10,
+                        help='first line of CSV file')
+    # parser.add_argument('--first_BB_folder_pool', type=str, default=0,
+    #                     help='first line of CSV file')
+
     args = parser.parse_args()
+
+    if args.single_id is not 0:
+        args.first_id = args.single_id
+        args.last_id = args.single_id
+        args.sleep_between_videos = 0
+
 
     if args.CSV is None:
         run_single_sequence(args)
@@ -120,9 +172,15 @@ def main():
     else:
         df = pd.read_csv(os.path.join(args.path, args.CSV))
         for i, data in df.iterrows():
-            print("Entry", i)
+            # print("Entry", i)
             # print(data["Youtube_ID"])
-            if data["Duration"] > 0:
+            # print(data)
+            if data["Duration"] > 0 and i >= args.first_id and i <= args.last_id:
+                # if isinstance(data["Approval Silvio"], str):
+                #     if "no" in data["Approval Silvio"]:
+                #         continue
+
+
                 # if (isinstance(data["Object_ID"], float)):
                 # print(data["Youtube_ID"])
                 args.YT_ID = data["Youtube_ID"]
@@ -130,6 +188,7 @@ def main():
                 args.duration = int(data["Duration"])
                 args.ID = int(data["Object_ID"])
 
+                print(args)
                 run_single_sequence(args)
     
 

@@ -91,7 +91,7 @@ def draw_first_BB(sequence_path, frame_path, first_BB_path, sequence_ID):
             cv2.rectangle(frame_disp,  (annot[0], annot[1]),
                                 (annot[0]+annot[2], annot[1] + annot[3]), 
                                 (0, 255, 00), 2)  # Cyan
-                                
+
         cv2.putText(frame_disp, 'Select target ROI and press ENTER [ESC to use previous BB]', (20, 30), cv2.FONT_HERSHEY_COMPLEX_SMALL,
                     1.5, (0, 0, 0), 1)
 
@@ -112,15 +112,18 @@ def draw_first_BB(sequence_path, frame_path, first_BB_path, sequence_ID):
     return init_state
 
 
-def run_tracker_pysot(YT_ID, ID, path):
+def run_tracker_pysot(YT_ID, ID, path, tracking_results_path, overwrite):
 
     for my_trackers in tqdm(['siamrpn_alex_dwxcorr', 'siamrpn_r50_l234_dwxcorr', 'siamrpn_mobilev2_l234_dwxcorr']):
     # for my_trackers in tqdm(['siamrpn_r50_l234_dwxcorr']):
-        os.system(
-            f"python run_pysot.py --YT_ID '{YT_ID}' --ID {ID} --tracker_name '{my_trackers}' --path {path}")
+        if not os.path.exists(os.path.join(tracking_results_path, my_trackers)) or overwrite:
+            os.system(
+                f"python run_pysot.py --YT_ID '{YT_ID}' --ID {ID} --tracker_name '{my_trackers}' --path {path}")
 
 
-def run_tracker_pytracking(frame_path, sequence_path, tracking_results_path, sequence_ID):
+def run_tracker_pytracking(frame_path, sequence_path, tracking_results_path, sequence_ID, overwrite):
+
+
 
     # frames_path = os.path.join(
     #     args.path, args.YT_ID + '_' + str(args.ID), "frames")
@@ -138,6 +141,7 @@ def run_tracker_pytracking(frame_path, sequence_path, tracking_results_path, seq
     os.makedirs(tracking_results_path, exist_ok=True)
 
     for my_trackers in tqdm(['atom', 'eco']):
+
     # for my_trackers in tqdm(['atom']):
         my_tracker = Tracker(f"{my_trackers}", "default")
         #Path of the Result folder
@@ -146,8 +150,11 @@ def run_tracker_pytracking(frame_path, sequence_path, tracking_results_path, seq
         run_sequence(my_yt_sequence, my_tracker)
 
 
-def result_BB(tracking_results_path, frame_path, frame_BB_path, sequence_ID, YT_ID):
+def result_BB(tracking_results_path, frame_path, frame_BB_path, sequence_ID, YT_ID, overwrite):
     
+    if os.path.exists(frame_BB_path) and not overwrite:
+        return
+
     results_ATOM = np.loadtxt(os.path.join(tracking_results_path,
                               "atom", f"{sequence_ID}.txt"), dtype=np.int)
     results_ECO = np.loadtxt(os.path.join(tracking_results_path,
@@ -165,37 +172,38 @@ def result_BB(tracking_results_path, frame_path, frame_BB_path, sequence_ID, YT_
         frame_file = os.path.join(frame_path, f"{i+1:04d}.png")
         img = cv2.imread(frame_file)
 
+        cv2.putText(img, sequence_ID, (0, 20),cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 255), 1)
+        
         cv2.rectangle(img,  (ATOM_BB[0], ATOM_BB[1]), 
                             (ATOM_BB[0]+ATOM_BB[2], ATOM_BB[1] + ATOM_BB[3]), 
                             (255, 255, 00), 2)  # Cyan
-        cv2.putText(img, 'ATOM', (0, 20), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 00), 1)
+        cv2.putText(img, 'ATOM', (0, 40), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 00), 1)
 
         cv2.rectangle(img,  (ECO_BB[0], ECO_BB[1]), 
                             (ECO_BB[0] + ECO_BB[2], ECO_BB[1] + ECO_BB[3]), 
                             (255, 00, 00), 2)  # Blue
-        cv2.putText(img, 'ECO', (0, 30), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 00, 00), 1)
+        cv2.putText(img, 'ECO', (0, 60), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 00, 00), 1)
 
         cv2.rectangle(img,  (siamrpn_mobile_BB[0], siamrpn_mobile_BB[1]), 
                             (siamrpn_mobile_BB[0] + siamrpn_mobile_BB[2], siamrpn_mobile_BB[1] + siamrpn_mobile_BB[3]), 
                             (255, 255, 255), 2)  # White
-        cv2.putText(img, 'SiamRPN_Mobile', (0, 50), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 255), 1)
+        cv2.putText(img, 'SiamRPN_Mobile', (0, 80), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 255, 255), 1)
 
         cv2.rectangle(img,  (siamrpn_alex_BB[0], siamrpn_alex_BB[1]),
                             (siamrpn_alex_BB[0] +  siamrpn_alex_BB[2], siamrpn_alex_BB[1] + siamrpn_alex_BB[3]),
                             (255, 00, 255), 2)  # Magente
-        cv2.putText(img, 'SiamRPN_AlexNet', (0, 40), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 00, 255), 1)
+        cv2.putText(img, 'SiamRPN_AlexNet', (0, 100), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 00, 255), 1)
 
         cv2.rectangle(img,  (siamrpn_r50_BB[0], siamrpn_r50_BB[1]), 
                             (siamrpn_r50_BB[0] + siamrpn_r50_BB[2], siamrpn_r50_BB[1] + siamrpn_r50_BB[3]), 
                             (00, 00, 255), 2)  # Red
-        cv2.putText(img, 'SiamRPN_R50', (0, 60), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (00, 00, 255), 1)
+        cv2.putText(img, 'SiamRPN_R50', (0, 120), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (00, 00, 255), 1)
 
         os.makedirs(frame_BB_path, exist_ok=True)
         frame_BB_file = os.path.join(frame_BB_path, f"{i+1:04d}.png")
         cv2.imwrite(frame_BB_file, img)
 
 
-def result_video(frame_BB_path, video_BB_path):
-    os.system(f"ffmpeg -y -i {frame_BB_path}/%04d.png -qscale:v 2 {video_BB_path} -hide_banner")
-    os.system(
-        f"xdg-open {video_BB_path}")
+def result_video(frame_BB_path, video_BB_path, overwrite):
+    if overwrite or not os.path.exists(video_BB_path):
+        os.system(f"ffmpeg -y -i {frame_BB_path}/%04d.png -qscale:v 2 {video_BB_path} -hide_banner")
