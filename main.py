@@ -86,8 +86,10 @@ def run_single_sequence(args):
 
     # draw BB if asked to
     if args.draw_BB:
-        draw_first_BB(sequence_path, frame_path,
-                      first_BB_path, sequence_ID)
+        if (not os.path.exists(first_BB_path)):
+            os.system(f"xdg-open {cut_video_path}")
+            draw_first_BB(sequence_path, frame_path,
+                        first_BB_path, sequence_ID)
 
 
     if args.run_trackers:
@@ -176,9 +178,9 @@ def main():
             # print(data["Youtube_ID"])
             # print(data)
             if data["Duration"] > 0 and i >= args.first_id and i <= args.last_id:
-                # if isinstance(data["Approval Silvio"], str):
-                #     if "no" in data["Approval Silvio"]:
-                #         continue
+                if isinstance(data["Approval Silvio"], str):
+                    if "no" in data["Approval Silvio"]:
+                        continue
 
 
                 # if (isinstance(data["Object_ID"], float)):
