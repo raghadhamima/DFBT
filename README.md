@@ -57,3 +57,15 @@ In pytracking:
 Atom model will have 0 bytes check in pytracking/pytracking/networks/atom_default.pth 
 
   *download the new model of ATOM from issue 41 in pytracking github page*
+
+
+
+# Extend TrackngNet2.0
+
+python main.py --path "/media/giancos/Football/TrackingNet2.0" --CSV "TrackingNet 2.0 Test Set Extension - ImageNet (19).csv"
+
+`--draw_BB` : Draw first BB 
+
+`--run_trackers` : Run tracker with 1st BB
+
+`--play_video` : Play video

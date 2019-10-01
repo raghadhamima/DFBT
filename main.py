@@ -172,6 +172,7 @@ def main():
         run_single_sequence(args)
 
     else:
+        cnt = 0
         df = pd.read_csv(os.path.join(args.path, args.CSV))
         for i, data in df.iterrows():
             # print("Entry", i)
@@ -190,7 +191,8 @@ def main():
                 args.duration = int(data["Duration"])
                 args.ID = int(data["Object_ID"])
 
-                print(args)
+                cnt += 1
+                print(cnt, args)
                 run_single_sequence(args)
     
 
